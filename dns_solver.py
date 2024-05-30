@@ -1,36 +1,38 @@
+#### para correr ejecutar en terminal: python dns_solver.py www.harvard.edu 
+
 import socket
 import sys
 from scapy.all import DNS, DNSQR, DNSRR, IP, UDP
 
-def send_dns_query(server, query_name):
-    query = DNS(rd=0, qd=DNSQR(qname=query_name, qtype='A'))
-    raw_query = bytes(query)
+# def send_dns_query(server, query_name):
+#     query = DNS(rd=0, qd=DNSQR(qname=query_name, qtype='A'))
+#     raw_query = bytes(query)
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.settimeout(5)
-    sock.sendto(raw_query, (server, 53))
+#     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#     sock.settimeout(5)
+#     sock.sendto(raw_query, (server, 53))
 
-    try:
-        data, _ = sock.recvfrom(512)
-        response = DNS(data)
-        return response
-    except socket.timeout:
-        print(f"Request to {server} timed out.")
-        return None
-    finally:
-        sock.close()
+#     try:
+#         data, _ = sock.recvfrom(512)
+#         response = DNS(data)
+#         return response
+#     except socket.timeout:
+#         print(f"Request to {server} timed out.")
+#         return None
+#     finally:
+#         sock.close()
 
-# def send_dns_query(dominio, server_ip):
-#     query=DNS(rd=1, qd=DNSQR(qname=dominio, qtype="A")) #creo el paquete DNS con scapy
+def send_dns_query(server_ip, dominio):
+    query=DNS(rd=1, qd=DNSQR(qname=dominio, qtype="A")) #creo el paquete DNS con scapy
     
-#     socketsito=socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #creo el socket UDP con direcciones IPv4
-#     socketsito.sendto(bytes(query), (server_ip,53)) #envio mi paquete DNS al socket con la ip y puerto correspondiente
+    socketsito=socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #creo el socket UDP con direcciones IPv4
+    socketsito.sendto(bytes(query), (server_ip,53)) #envio mi paquete DNS al socket con la ip y puerto correspondiente
 
-#     data, no_me_importa_nada = socketsito.recvfrom(512) #espero la respuesta del socket
+    data, no_me_importa_nada = socketsito.recvfrom(512) #espero la respuesta del socket
 
-#     socketsito.close() #lo cierro de prepo
+    socketsito.close() #lo cierro de prepo
 
-#     return DNS(data) #me quedo con la data de la respuesta
+    return DNS(data) #me quedo con la data de la respuesta
 
 def resolve_dns_aux(domain, servers):
     if not servers:
@@ -73,6 +75,7 @@ def resolve_dns_aux(domain, servers):
 
 def resolve_dns(domain):
     return resolve_dns_aux(domain, ["199.9.14.201"])
+
 # def resolve_dns_2(domain, server):
 
 if __name__ == "__main__":
